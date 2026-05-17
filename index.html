@@ -282,6 +282,30 @@
     .center { text-align: center; }
     .max-container { max-width: 1100px; margin: 0 auto; }
 
+    /* PRIVACY SECTION */
+    .privacy-grid {
+      max-width: 900px; margin: 4rem auto 0;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+    .privacy-card {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px; padding: 1.75rem;
+    }
+    .privacy-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .privacy-card p { color: var(--muted); font-size: 0.88rem; line-height: 1.65; }
+    .privacy-icon { font-size: 1.6rem; margin-bottom: 0.85rem; display: block; }
+    .consent-banner {
+      max-width: 680px; margin: 3rem auto 0;
+      background: linear-gradient(135deg, rgba(2,132,199,0.08), rgba(99,102,241,0.08));
+      border: 1px solid rgba(99,102,241,0.2);
+      border-radius: 18px; padding: 1.5rem 2rem;
+      display: flex; align-items: center; gap: 1.25rem; text-align: left;
+    }
+    .consent-banner-icon { font-size: 2rem; flex-shrink: 0; }
+    .consent-banner p { color: var(--muted); font-size: 0.9rem; margin: 0; }
+    .consent-banner strong { color: var(--text); }
+
     /* Play Store badge */
     .store-badge {
       display: inline-flex; align-items: center; gap: 12px;
@@ -307,7 +331,7 @@
   <ul class="nav-links">
     <li><a href="#features">Features</a></li>
     <li><a href="#how-it-works">How it works</a></li>
-    <li><a href="/privacy.html">Privacy</a></li>
+    <li><a href="#privacy">Privacy</a></li>
     <li><a href="/terms.html">Terms</a></li>
   </ul>
 </nav>
@@ -455,8 +479,38 @@
   </div>
 </section>
 
+<!-- PRIVACY -->
+<section id="privacy" style="background: var(--bg2);">
+  <div class="max-container center">
+    <div class="section-label">Your memories, your rules</div>
+    <h2 class="section-title">Private by default</h2>
+    <p class="section-sub" style="margin:0 auto">Everything in TravelThread stays inside your group. There are no public profiles, no discovery feeds, and no surprises.</p>
+    <div class="privacy-grid">
+      <div class="privacy-card">
+        <span class="privacy-icon">🔐</span>
+        <h3>End-to-end group privacy</h3>
+        <p>Photos, messages, and your map are visible only to people with your invite code. Nothing leaks out unless your whole group agrees.</p>
+      </div>
+      <div class="privacy-card">
+        <span class="privacy-icon">🗳️</span>
+        <h3>Unanimous consent to share</h3>
+        <p>Want to share your trip story publicly? Every single member must vote yes. One no vote — or no vote at all — and it stays private.</p>
+      </div>
+      <div class="privacy-card">
+        <span class="privacy-icon">🗑️</span>
+        <h3>Delete anytime</h3>
+        <p>Remove your own photos at any time. Delete your account and all your data is gone within 30 days — no questions asked.</p>
+      </div>
+    </div>
+    <div class="consent-banner">
+      <span class="consent-banner-icon">🛡️</span>
+      <p><strong>Nobody can share your photos without your consent.</strong> The group collage only goes public when every member has voted to share it. If you haven't voted, it stays locked.</p>
+    </div>
+  </div>
+</section>
+
 <!-- CTA -->
-<section class="cta-section" style="background: var(--bg2);">
+<section class="cta-section" style="background: var(--bg);">
   <div class="cta-glow"></div>
   <div class="cta-box">
     <h2>Ready for your next adventure?</h2>
