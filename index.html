@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TravelThread — Share the journey</title>
+  <meta name="description" content="A private photo journal for your travel group. Upload moments, chat live, explore your route on a map, and wrap up with a beautiful trip story." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0a0f1e;
+      --bg2:      #0f172a;
+      --bg3:      #1e293b;
+      --brand:    #0284c7;
+      --brand2:   #0ea5e9;
+      --brand3:   #38bdf8;
+      --accent:   #6366f1;
+      --text:     #f8fafc;
+      --muted:    #94a3b8;
+      --border:   #1e293b;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 64px;
+      background: rgba(10, 15, 30, 0.8);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-mark {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .nav-logo-text { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--muted); font-size: 0.9rem; font-weight: 500; transition: color .2s; }
+    .nav-links a:hover { color: var(--text); }
+    @media (max-width: 600px) { .nav-links { display: none; } }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 120px 1.5rem 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 800px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(2,132,199,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(2,132,199,0.12); border: 1px solid rgba(2,132,199,0.3);
+      color: var(--brand3); font-size: 0.8rem; font-weight: 600;
+      padding: 6px 14px; border-radius: 999px; margin-bottom: 2rem;
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .hero h1 {
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 900; line-height: 1.05; letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, var(--brand2), var(--brand3), var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: clamp(1rem, 2.5vw, 1.25rem); color: var(--muted);
+      max-width: 560px; margin: 0 auto 3rem;
+    }
+    .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      color: white; font-weight: 700; font-size: 1rem;
+      padding: 14px 28px; border-radius: 14px; text-decoration: none;
+      box-shadow: 0 8px 32px rgba(2,132,199,0.35);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(2,132,199,0.45); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+      color: var(--text); font-weight: 600; font-size: 1rem;
+      padding: 14px 28px; border-radius: 14px; text-decoration: none;
+      transition: background .2s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.12); }
+
+    /* PHONE MOCKUP */
+    .mockup-wrap {
+      margin-top: 5rem; position: relative;
+      display: flex; justify-content: center; align-items: flex-end; gap: 1.5rem;
+    }
+    .phone {
+      width: 240px; background: var(--bg2); border-radius: 36px;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+      overflow: hidden;
+    }
+    .phone-inner { padding: 1rem; }
+    .phone-status { display: flex; justify-content: space-between; padding: 8px 16px 0; opacity: .5; font-size: 11px; }
+    .screen-header { background: var(--bg3); border-radius: 16px; padding: 12px 14px; margin-bottom: 10px; }
+    .screen-title { font-size: 13px; font-weight: 700; }
+    .screen-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .photo-card {
+      border-radius: 12px; overflow: hidden; aspect-ratio: 1;
+      background: linear-gradient(135deg, var(--bg3), var(--border));
+      position: relative;
+    }
+    .photo-card.p1 { background: linear-gradient(135deg, #1d4ed8, #7c3aed); }
+    .photo-card.p2 { background: linear-gradient(135deg, #065f46, #0284c7); }
+    .photo-card.p3 { background: linear-gradient(135deg, #7c2d12, #dc2626); }
+    .photo-card.p4 { background: linear-gradient(135deg, #713f12, #ca8a04); }
+    .photo-label {
+      position: absolute; bottom: 6px; left: 6px; right: 6px;
+      background: rgba(0,0,0,0.5); border-radius: 6px;
+      font-size: 9px; padding: 3px 6px; color: rgba(255,255,255,0.8);
+    }
+    .heart-row { display: flex; gap: 6px; margin-top: 8px; align-items: center; }
+    .heart-pill {
+      background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3);
+      border-radius: 999px; font-size: 10px; padding: 3px 8px; color: #fca5a5;
+    }
+    .chat-bubble {
+      background: var(--bg3); border-radius: 12px 12px 12px 4px;
+      padding: 8px 10px; font-size: 10px; margin-bottom: 6px; max-width: 80%;
+    }
+    .chat-bubble.own {
+      background: linear-gradient(135deg, var(--brand), #0369a1);
+      border-radius: 12px 12px 4px 12px; margin-left: auto;
+    }
+    .map-screen {
+      background: var(--bg3); border-radius: 14px; overflow: hidden;
+      height: 120px; position: relative; margin-bottom: 8px;
+    }
+    .map-grid {
+      position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .map-line {
+      position: absolute; top: 40%; left: 10%; width: 80%; height: 2px;
+      background: linear-gradient(90deg, var(--brand), var(--accent));
+      border-radius: 2px;
+    }
+    .map-pin {
+      position: absolute; width: 10px; height: 10px; border-radius: 50%;
+      background: var(--brand2); border: 2px solid white;
+      box-shadow: 0 0 8px var(--brand);
+    }
+    .phone-tall { transform: translateY(-20px); }
+    @media (max-width: 640px) { .phone-tall { display: none; } .phone { width: 200px; } }
+
+    /* FEATURES */
+    section { padding: 100px 1.5rem; }
+    .section-label {
+      display: inline-block; color: var(--brand3);
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; margin-bottom: 1rem;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800;
+      letter-spacing: -0.02em; margin-bottom: 1rem;
+    }
+    .section-sub { color: var(--muted); max-width: 520px; font-size: 1.05rem; }
+    .features-grid {
+      max-width: 1100px; margin: 5rem auto 0;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5px; border-radius: 24px; overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .feature-card {
+      background: var(--bg2); padding: 2rem;
+      transition: background .2s;
+    }
+    .feature-card:hover { background: var(--bg3); }
+    .feature-icon {
+      width: 48px; height: 48px; border-radius: 14px; margin-bottom: 1.25rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+    }
+    .icon-blue  { background: rgba(2,132,199,0.15); }
+    .icon-green { background: rgba(22,163,74,0.15); }
+    .icon-purple{ background: rgba(99,102,241,0.15); }
+    .icon-amber { background: rgba(245,158,11,0.15); }
+    .icon-pink  { background: rgba(236,72,153,0.15); }
+    .icon-teal  { background: rgba(20,184,166,0.15); }
+    .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .feature-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.65; }
+
+    /* HOW IT WORKS */
+    .steps { max-width: 860px; margin: 4rem auto 0; }
+    .step {
+      display: grid; grid-template-columns: 56px 1fr;
+      gap: 1.5rem; padding: 2rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      width: 48px; height: 48px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.1rem; flex-shrink: 0;
+    }
+    .step h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .step p { color: var(--muted); font-size: 0.95rem; }
+
+    /* CTA */
+    .cta-section {
+      text-align: center; padding: 100px 1.5rem;
+      position: relative; overflow: hidden;
+    }
+    .cta-glow {
+      position: absolute; bottom: -200px; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-box {
+      max-width: 640px; margin: 0 auto;
+      background: linear-gradient(135deg, rgba(2,132,199,0.08), rgba(99,102,241,0.08));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 28px; padding: 3.5rem 2.5rem;
+    }
+    .cta-box h2 { font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 800; margin-bottom: 1rem; letter-spacing: -0.02em; }
+    .cta-box p { color: var(--muted); margin-bottom: 2.5rem; font-size: 1.05rem; }
+    .badge-coming {
+      display: inline-block;
+      background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3);
+      color: #fcd34d; font-size: 0.75rem; font-weight: 700;
+      padding: 4px 10px; border-radius: 999px; margin-left: 8px;
+      vertical-align: middle; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 1.5rem; text-align: center;
+    }
+    .footer-inner {
+      max-width: 900px; margin: 0 auto;
+      display: flex; flex-wrap: wrap; align-items: center;
+      justify-content: space-between; gap: 1rem;
+    }
+    .footer-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+    .footer-logo-mark {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      display: flex; align-items: center; justify-content: center; font-size: 13px;
+    }
+    .footer-logo-text { font-size: 0.95rem; font-weight: 700; color: var(--text); }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { color: var(--muted); text-decoration: none; font-size: 0.85rem; transition: color .2s; }
+    .footer-links a:hover { color: var(--text); }
+    .footer-copy { color: var(--muted); font-size: 0.8rem; width: 100%; text-align: center; margin-top: 1rem; }
+
+    .center { text-align: center; }
+    .max-container { max-width: 1100px; margin: 0 auto; }
+
+    /* Play Store badge */
+    .store-badge {
+      display: inline-flex; align-items: center; gap: 12px;
+      background: #000; border: 1px solid #333; border-radius: 12px;
+      padding: 10px 20px; text-decoration: none; color: white;
+      transition: border-color .2s, transform .2s;
+    }
+    .store-badge:hover { border-color: #555; transform: translateY(-2px); }
+    .store-badge-icon { font-size: 28px; }
+    .store-badge-text { text-align: left; }
+    .store-badge-text small { display: block; font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 0.05em; }
+    .store-badge-text strong { display: block; font-size: 16px; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="/">
+    <div class="nav-logo-mark">✈️</div>
+    <span class="nav-logo-text">TravelThread</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how-it-works">How it works</a></li>
+    <li><a href="/privacy.html">Privacy</a></li>
+    <li><a href="/terms.html">Terms</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-badge">✈️ Now available on Android</div>
+  <h1>Your travels,<br><span class="gradient-text">together.</span></h1>
+  <p>A private shared space for your travel group. Photos, live chat, a journey map, and a trip story — all in one place.</p>
+  <div class="hero-buttons">
+    <a href="https://play.google.com/store/apps/details?id=com.travelthread.app" class="store-badge">
+      <span class="store-badge-icon">▶</span>
+      <span class="store-badge-text">
+        <small>Get it on</small>
+        <strong>Google Play</strong>
+      </span>
+    </a>
+  </div>
+
+  <!-- Phone mockups -->
+  <div class="mockup-wrap">
+    <!-- Feed phone -->
+    <div class="phone">
+      <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+      <div class="phone-inner">
+        <div class="screen-header">
+          <div class="screen-title">🌴 Bali Trip 2025</div>
+          <div class="screen-sub">4 members · 7 photos</div>
+        </div>
+        <div class="photo-grid">
+          <div class="photo-card p1"><div class="photo-label">Ubud Temple</div></div>
+          <div class="photo-card p2"><div class="photo-label">Rice Fields</div></div>
+          <div class="photo-card p3"><div class="photo-label">Sunset</div></div>
+          <div class="photo-card p4"><div class="photo-label">Breakfast</div></div>
+        </div>
+        <div class="heart-row">
+          <span class="heart-pill">❤️ 12</span>
+          <span style="font-size:10px;color:var(--muted)">3 comments</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat phone (taller) -->
+    <div class="phone phone-tall">
+      <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+      <div class="phone-inner">
+        <div class="screen-header">
+          <div class="screen-title">💬 Group Chat</div>
+          <div class="screen-sub">Bali Trip 2025</div>
+        </div>
+        <div class="chat-bubble">That temple was incredible 🙏</div>
+        <div class="chat-bubble">Dinner at 7? Found a warung nearby</div>
+        <div class="chat-bubble own">Yes!! Send the map pin 📍</div>
+        <div class="chat-bubble">😂 already sent you a GIF</div>
+        <div class="map-screen">
+          <div class="map-grid"></div>
+          <div class="map-line"></div>
+          <div class="map-pin" style="top:35%;left:20%"></div>
+          <div class="map-pin" style="top:38%;left:55%"></div>
+          <div class="map-pin" style="top:42%;left:78%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" style="background: var(--bg2);">
+  <div class="max-container center">
+    <div class="section-label">Everything you need</div>
+    <h2 class="section-title">Built for real travel groups</h2>
+    <p class="section-sub" style="margin:0 auto">No public feeds, no algorithm. Just you and your travel crew, sharing moments privately.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon icon-blue">📸</div>
+        <h3>Private Photo Feed</h3>
+        <p>Everyone in the group can upload photos. Like, comment, and react with emoji — your own private Instagram for the trip.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-green">💬</div>
+        <h3>Live Group Chat</h3>
+        <p>Text, images, and GIFs in a shared chat. React to messages with emoji. Coordinate dinner, share finds, or just laugh together.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-purple">🗺️</div>
+        <h3>Journey Map</h3>
+        <p>Every photo drops a pin. Tap a pin to see the photo and browse the full story of where you went, in order.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-amber">✨</div>
+        <h3>Trip Story</h3>
+        <p>When the trip ends, wrap it up with a beautiful photo collage. Share it publicly if everyone agrees, or keep it private.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-pink">🔒</div>
+        <h3>Invite Only</h3>
+        <p>Each trip has a unique invite code. Nobody gets in without it — your memories stay between your group.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-teal">📅</div>
+        <h3>Timeline</h3>
+        <p>Scroll through every moment in chronological order. Swipe through the full photo slideshow from the day you started.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works">
+  <div class="max-container center">
+    <div class="section-label">Simple by design</div>
+    <h2 class="section-title">Up and running in 60 seconds</h2>
+    <p class="section-sub" style="margin:0 auto">No setup, no tutorial. Just create a trip and share the code.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <h3>Create a trip</h3>
+          <p>Give your trip a name and you're in. A unique invite code is generated instantly — no configuration needed.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <h3>Invite your crew</h3>
+          <p>Share the code with whoever is joining. They enter it in the app and land straight in your group.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div>
+          <h3>Share as you go</h3>
+          <p>Upload photos, chat, react to each other's moments. The map fills up automatically as you shoot on location.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div>
+          <h3>Wrap it up</h3>
+          <p>When the trip is over, generate your trip story — a collage of everyone's best shots. Relive it anytime.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" style="background: var(--bg2);">
+  <div class="cta-glow"></div>
+  <div class="cta-box">
+    <h2>Ready for your next adventure?</h2>
+    <p>Free to download. No subscription needed to get started. Take your travel group private.</p>
+    <a href="https://play.google.com/store/apps/details?id=com.travelthread.app" class="store-badge" style="margin:0 auto">
+      <span class="store-badge-icon">▶</span>
+      <span class="store-badge-text">
+        <small>Get it on</small>
+        <strong>Google Play</strong>
+      </span>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <a class="footer-logo" href="/">
+      <div class="footer-logo-mark">✈️</div>
+      <span class="footer-logo-text">TravelThread</span>
+    </a>
+    <div class="footer-links">
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms of Service</a>
+      <a href="mailto:hello@travelthread.app">Contact</a>
+    </div>
+    <p class="footer-copy">© 2025 TravelThread. All rights reserved.</p>
+  </div>
+</footer>
+
+</body>
+</html>

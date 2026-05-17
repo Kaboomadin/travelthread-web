@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Join trip — TravelThread</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg:#0a0f1e; --brand:#0284c7; --brand3:#38bdf8; --accent:#6366f1; --text:#f8fafc; --muted:#94a3b8; --border:#1e293b; }
+    body { font-family:'Inter',system-ui,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2rem; text-align:center; }
+    .glow { position:fixed; top:-200px; left:50%; transform:translateX(-50%); width:600px; height:600px; border-radius:50%; background:radial-gradient(circle,rgba(2,132,199,0.12) 0%,transparent 70%); pointer-events:none; }
+    .card { max-width:420px; width:100%; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:28px; padding:2.5rem 2rem; }
+    .logo { width:64px; height:64px; border-radius:20px; background:linear-gradient(135deg,var(--brand),var(--accent)); display:flex; align-items:center; justify-content:center; font-size:30px; margin:0 auto 1.5rem; }
+    h1 { font-size:1.6rem; font-weight:800; margin-bottom:0.5rem; }
+    p { color:var(--muted); font-size:0.95rem; margin-bottom:2rem; line-height:1.6; }
+    .code-box { background:rgba(2,132,199,0.1); border:1px solid rgba(2,132,199,0.25); border-radius:14px; padding:1rem; margin-bottom:2rem; font-size:1.4rem; font-weight:800; letter-spacing:0.15em; color:var(--brand3); font-variant-numeric:tabular-nums; }
+    .btn { display:block; width:100%; padding:14px; border-radius:14px; font-weight:700; font-size:1rem; text-decoration:none; text-align:center; transition:transform .15s, box-shadow .15s; }
+    .btn-primary { background:linear-gradient(135deg,var(--brand),var(--accent)); color:white; margin-bottom:0.75rem; box-shadow:0 8px 24px rgba(2,132,199,0.3); }
+    .btn-primary:hover { transform:translateY(-2px); box-shadow:0 12px 32px rgba(2,132,199,0.4); }
+    .btn-secondary { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:var(--text); }
+    .btn-secondary:hover { background:rgba(255,255,255,0.1); }
+    .divider { color:var(--muted); font-size:0.8rem; margin:1rem 0; }
+    .footer-note { margin-top:2rem; font-size:0.8rem; color:var(--muted); }
+    .footer-note a { color:var(--brand3); text-decoration:none; }
+  </style>
+  <script>
+    // Extract invite code from path: /join/ABC123
+    document.addEventListener('DOMContentLoaded', function() {
+      const parts = window.location.pathname.split('/').filter(Boolean);
+      const code = parts[parts.length - 1];
+      if (code && code !== 'join' && code !== 'index.html') {
+        document.getElementById('code-display').textContent = code.toUpperCase();
+        document.getElementById('deep-link').href = 'travelthread://join/' + code;
+      } else {
+        document.getElementById('code-section').style.display = 'none';
+        document.getElementById('no-code').style.display = 'block';
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="glow"></div>
+  <div class="card">
+    <div class="logo">✈️</div>
+    <h1>You're invited!</h1>
+    <p>Someone added you to their travel group on TravelThread. Open the app to join.</p>
+
+    <div id="code-section">
+      <p style="margin-bottom:0.5rem;font-size:0.85rem;color:var(--muted)">Your invite code</p>
+      <div class="code-box" id="code-display">——</div>
+      <a class="btn btn-primary" id="deep-link" href="#">Open in TravelThread</a>
+      <div class="divider">— or —</div>
+      <a class="btn btn-secondary" href="https://play.google.com/store/apps/details?id=com.travelthread.app">
+        Download TravelThread on Google Play
+      </a>
+    </div>
+
+    <div id="no-code" style="display:none;">
+      <p>Download TravelThread and ask your travel buddy to share their invite code with you.</p>
+      <a class="btn btn-primary" href="https://play.google.com/store/apps/details?id=com.travelthread.app">
+        Get TravelThread on Google Play
+      </a>
+    </div>
+
+    <p class="footer-note">
+      <a href="/">Learn more about TravelThread</a> &nbsp;·&nbsp;
+      <a href="/privacy.html">Privacy Policy</a>
+    </p>
+  </div>
+</body>
+</html>
