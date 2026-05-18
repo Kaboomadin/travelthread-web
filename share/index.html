@@ -100,6 +100,20 @@
     }
     .trip-date { color: var(--muted); font-size: 0.9rem; }
 
+    .trip-stats {
+      display: flex; justify-content: center; gap: 2rem; margin-top: 1rem;
+    }
+    .stat {
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+    }
+    .stat-value {
+      font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text);
+    }
+    .stat-label {
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted);
+    }
+
     .collage-frame {
       width: 100%;
       background: var(--bg2);
@@ -206,6 +220,16 @@
       <div class="trip-badge">✨ Trip Story</div>
       <h1 class="trip-title" id="trip-title">Loading…</h1>
       <p class="trip-date" id="trip-date"></p>
+      <div class="trip-stats" id="trip-stats" style="display:none">
+        <div class="stat">
+          <span class="stat-value" id="stat-photos">–</span>
+          <span class="stat-label">Photos</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="stat-members">–</span>
+          <span class="stat-label">Travellers</span>
+        </div>
+      </div>
     </div>
 
     <div class="collage-frame">
@@ -251,8 +275,15 @@
     });
   }
 
-  function formatDate(iso) {
-    return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  function formatMonth(iso) {
+    return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long" });
+  }
+
+  function formatDateRange(createdAt, wrappedAt) {
+    const start = formatMonth(createdAt);
+    if (!wrappedAt) return start;
+    const end = formatMonth(wrappedAt);
+    return start === end ? start : `${new Date(createdAt).toLocaleDateString("en-US", { month: "long" })} – ${end}`;
   }
 
   async function load() {
@@ -279,9 +310,15 @@
       if (!data.image_url) { show("error"); return; }
 
       document.getElementById("trip-title").textContent = data.group_name;
-      document.getElementById("trip-date").textContent = data.created_at ? formatDate(data.created_at) : "";
+      document.getElementById("trip-date").textContent = formatDateRange(data.created_at, data.wrapped_at);
       document.getElementById("og-title").setAttribute("content", `${data.group_name} — TravelThread`);
       document.title = `${data.group_name} — TravelThread`;
+
+      if (data.photo_count || data.member_count) {
+        document.getElementById("stat-photos").textContent = data.photo_count;
+        document.getElementById("stat-members").textContent = data.member_count;
+        document.getElementById("trip-stats").style.display = "flex";
+      }
 
       const img = document.getElementById("collage-img");
       img.src = data.image_url;
