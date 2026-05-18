@@ -78,7 +78,7 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     .state-text { color: var(--muted); font-size: 0.95rem; }
 
-    /* STATE: error / not found */
+    /* STATE: error */
     .error-icon { font-size: 3rem; margin-bottom: .5rem; }
     .error-title { font-size: 1.4rem; font-weight: 700; margin-bottom: .5rem; }
     .error-sub { color: var(--muted); font-size: 0.95rem; text-align: center; max-width: 360px; }
@@ -103,16 +103,9 @@
     .trip-stats {
       display: flex; justify-content: center; gap: 2rem; margin-top: 1rem;
     }
-    .stat {
-      display: flex; flex-direction: column; align-items: center; gap: 2px;
-    }
-    .stat-value {
-      font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text);
-    }
-    .stat-label {
-      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em;
-      text-transform: uppercase; color: var(--muted);
-    }
+    .stat { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .stat-value { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
+    .stat-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 
     .collage-frame {
       width: 100%;
@@ -123,14 +116,8 @@
       box-shadow: 0 40px 80px rgba(0,0,0,0.5);
       margin-bottom: 2rem;
     }
-    .collage-frame img {
-      width: 100%; display: block;
-    }
-    .collage-frame .img-placeholder {
-      aspect-ratio: 4/3;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--muted); font-size: 0.9rem;
-    }
+    .collage-frame img { width: 100%; display: block; }
+    .collage-frame.stories img { max-width: 360px; margin: 0 auto; display: block; }
 
     .actions {
       display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
@@ -154,6 +141,80 @@
       cursor: pointer; transition: background .15s;
     }
     .btn-secondary:hover { background: rgba(255,255,255,0.12); }
+
+    /* PHOTO GRID */
+    .photo-grid-section {
+      width: 100%; max-width: 760px;
+      margin-bottom: 3rem;
+    }
+    .photo-grid-heading {
+      font-size: 1rem; font-weight: 700; margin-bottom: 1rem;
+      color: var(--text);
+    }
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 8px;
+    }
+    .photo-item {
+      position: relative; cursor: pointer; border-radius: 12px; overflow: hidden;
+      background: var(--bg3);
+      aspect-ratio: 1;
+      transition: transform .15s;
+    }
+    .photo-item:hover { transform: scale(1.02); }
+    .photo-item img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .photo-item-overlay {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+      padding: 24px 8px 8px;
+      opacity: 0; transition: opacity .2s;
+    }
+    .photo-item:hover .photo-item-overlay { opacity: 1; }
+    .photo-caption { font-size: 0.72rem; color: white; font-weight: 500; line-height: 1.3; }
+    .photo-uploader { font-size: 0.65rem; color: rgba(255,255,255,0.6); margin-top: 2px; }
+
+    /* LIGHTBOX */
+    .lightbox {
+      display: none; position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.92);
+      align-items: center; justify-content: center;
+      padding: 1rem;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox-inner {
+      position: relative; max-width: 90vw; max-height: 90vh;
+      display: flex; flex-direction: column; align-items: center; gap: 1rem;
+    }
+    .lightbox-img {
+      max-width: 100%; max-height: 80vh;
+      border-radius: 16px;
+      object-fit: contain;
+      display: block;
+    }
+    .lightbox-meta { text-align: center; }
+    .lightbox-caption { font-size: 1rem; font-weight: 600; color: white; }
+    .lightbox-uploader { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+    .lightbox-close {
+      position: fixed; top: 1.5rem; right: 1.5rem;
+      background: rgba(255,255,255,0.1); border: none; color: white;
+      width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+      font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+      transition: background .15s;
+    }
+    .lightbox-close:hover { background: rgba(255,255,255,0.2); }
+    .lightbox-nav {
+      position: fixed; top: 50%; transform: translateY(-50%);
+      background: rgba(255,255,255,0.1); border: none; color: white;
+      width: 44px; height: 44px; border-radius: 50%; cursor: pointer;
+      font-size: 1.3rem; display: flex; align-items: center; justify-content: center;
+      transition: background .15s;
+    }
+    .lightbox-nav:hover { background: rgba(255,255,255,0.2); }
+    .lightbox-prev { left: 1rem; }
+    .lightbox-next { right: 1rem; }
 
     /* CTA strip */
     .cta-strip {
@@ -232,7 +293,7 @@
       </div>
     </div>
 
-    <div class="collage-frame">
+    <div class="collage-frame" id="collage-frame">
       <img id="collage-img" src="" alt="Trip collage" />
     </div>
 
@@ -240,20 +301,26 @@
       <button class="btn-primary" id="btn-share" onclick="shareTrip()">↗ Share</button>
       <a class="btn-secondary" id="btn-download" href="#" download="trip-story.svg">↓ Download</a>
     </div>
+  </div>
 
-    <div class="cta-strip">
-      <div class="cta-strip-text">
-        <h3>Create your own trip story</h3>
-        <p>Private photos, live chat, a journey map, and a beautiful collage — all in one place.</p>
-      </div>
-      <a class="store-badge" href="https://play.google.com/store/apps/details?id=com.travelthread.app">
-        <span style="font-size:22px">▶</span>
-        <span>
-          <small>Get it on</small>
-          <strong>Google Play</strong>
-        </span>
-      </a>
+  <!-- Photo grid (outside collage-wrap so it can be full-width-ish) -->
+  <div class="photo-grid-section" id="photo-grid-section" style="display:none">
+    <p class="photo-grid-heading">All photos</p>
+    <div class="photo-grid" id="photo-grid"></div>
+  </div>
+
+  <div class="cta-strip" style="margin-bottom:0">
+    <div class="cta-strip-text">
+      <h3>Create your own trip story</h3>
+      <p>Private photos, live chat, a journey map, and a beautiful collage — all in one place.</p>
     </div>
+    <a class="store-badge" href="https://play.google.com/store/apps/details?id=com.travelthread.app">
+      <span style="font-size:22px">▶</span>
+      <span>
+        <small>Get it on</small>
+        <strong>Google Play</strong>
+      </span>
+    </a>
   </div>
 </main>
 
@@ -265,9 +332,26 @@
   </p>
 </footer>
 
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightboxOnBackdrop(event)">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <button class="lightbox-nav lightbox-prev" onclick="lightboxNav(-1)">‹</button>
+  <button class="lightbox-nav lightbox-next" onclick="lightboxNav(1)">›</button>
+  <div class="lightbox-inner">
+    <img class="lightbox-img" id="lightbox-img" src="" alt="" />
+    <div class="lightbox-meta">
+      <div class="lightbox-caption" id="lightbox-caption"></div>
+      <div class="lightbox-uploader" id="lightbox-uploader"></div>
+    </div>
+  </div>
+</div>
+
 <script>
   const SUPABASE_URL = "https://jeaopfgdhwnuddgxzqoj.supabase.co";
   const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplYW9wZmdkaHdudWRkZ3h6cW9qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0ODgxNzMsImV4cCI6MjA5NDA2NDE3M30.lOBlKICCCGmG8t3ffKlkjilzdUuBBXo93GnRvWs2aN4";
+
+  let allPhotos = [];
+  let lightboxIndex = 0;
 
   function show(id) {
     ["loading", "error", "collage"].forEach(s => {
@@ -285,6 +369,73 @@
     const end = formatMonth(wrappedAt);
     return start === end ? start : `${new Date(createdAt).toLocaleDateString("en-US", { month: "long" })} – ${end}`;
   }
+
+  function buildPhotoGrid(photos) {
+    if (!photos || photos.length === 0) return;
+    allPhotos = photos;
+    const grid = document.getElementById("photo-grid");
+    grid.innerHTML = "";
+    photos.forEach((p, i) => {
+      const item = document.createElement("div");
+      item.className = "photo-item";
+      item.onclick = () => openLightbox(i);
+      const img = document.createElement("img");
+      img.src = p.url;
+      img.alt = p.caption || "Trip photo";
+      img.loading = "lazy";
+      const overlay = document.createElement("div");
+      overlay.className = "photo-item-overlay";
+      if (p.caption) {
+        const cap = document.createElement("div");
+        cap.className = "photo-caption";
+        cap.textContent = p.caption;
+        overlay.appendChild(cap);
+      }
+      const upl = document.createElement("div");
+      upl.className = "photo-uploader";
+      upl.textContent = p.uploader;
+      overlay.appendChild(upl);
+      item.appendChild(img);
+      item.appendChild(overlay);
+      grid.appendChild(item);
+    });
+    document.getElementById("photo-grid-section").style.display = "block";
+  }
+
+  function openLightbox(index) {
+    lightboxIndex = index;
+    updateLightbox();
+    document.getElementById("lightbox").classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeLightbox() {
+    document.getElementById("lightbox").classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  function closeLightboxOnBackdrop(e) {
+    if (e.target === document.getElementById("lightbox")) closeLightbox();
+  }
+
+  function lightboxNav(dir) {
+    lightboxIndex = (lightboxIndex + dir + allPhotos.length) % allPhotos.length;
+    updateLightbox();
+  }
+
+  function updateLightbox() {
+    const p = allPhotos[lightboxIndex];
+    document.getElementById("lightbox-img").src = p.url;
+    document.getElementById("lightbox-caption").textContent = p.caption || "";
+    document.getElementById("lightbox-uploader").textContent = p.uploader;
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (!document.getElementById("lightbox").classList.contains("open")) return;
+    if (e.key === "Escape") closeLightbox();
+    if (e.key === "ArrowLeft") lightboxNav(-1);
+    if (e.key === "ArrowRight") lightboxNav(1);
+  });
 
   async function load() {
     show("loading");
@@ -324,10 +475,18 @@
       img.src = data.image_url;
       img.alt = `${data.group_name} trip collage`;
 
+      if (data.layout === "stories") {
+        document.getElementById("collage-frame").classList.add("stories");
+      }
+
       document.getElementById("btn-download").href = data.image_url;
       document.getElementById("btn-download").download = `${data.group_name.replace(/\s+/g, "-")}-trip-story.svg`;
 
       show("collage");
+
+      if (data.photos && data.photos.length > 0) {
+        buildPhotoGrid(data.photos);
+      }
     } catch {
       show("error");
     }
