@@ -258,7 +258,8 @@
   async function load() {
     show("loading");
 
-    const token = location.pathname.split("/share/")[1]?.replace(/\/$/, "");
+    const token = new URLSearchParams(location.search).get("token") ||
+                  location.pathname.split("/share/")[1]?.replace(/\/$/, "");
     if (!token) { show("error"); return; }
 
     try {
