@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trip Story — TravelThread</title>
+  <meta name="description" content="A shared trip story from TravelThread." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="TravelThread" />
+  <meta property="og:title" id="og-title" content="Trip Story — TravelThread" />
+  <meta property="og:description" content="See the shared memories from this trip." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:     #0a0f1e;
+      --bg2:    #0f172a;
+      --bg3:    #1e293b;
+      --brand:  #0284c7;
+      --brand2: #0ea5e9;
+      --brand3: #38bdf8;
+      --accent: #6366f1;
+      --text:   #f8fafc;
+      --muted:  #94a3b8;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 64px;
+      background: rgba(10,15,30,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-mark {
+      width: 32px; height: 32px; border-radius: 9px;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      display: flex; align-items: center; justify-content: center; font-size: 15px;
+    }
+    .nav-logo-text { font-size: 1rem; font-weight: 700; color: var(--text); }
+    .nav-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      color: white; font-weight: 600; font-size: 0.85rem;
+      padding: 8px 18px; border-radius: 10px; text-decoration: none;
+      transition: opacity .2s;
+    }
+    .nav-cta:hover { opacity: .85; }
+
+    /* MAIN */
+    main {
+      flex: 1;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 100px 1.5rem 60px;
+    }
+
+    /* STATE: loading */
+    .state { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-top: 4rem; }
+    .spinner {
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: var(--brand2);
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .state-text { color: var(--muted); font-size: 0.95rem; }
+
+    /* STATE: error / not found */
+    .error-icon { font-size: 3rem; margin-bottom: .5rem; }
+    .error-title { font-size: 1.4rem; font-weight: 700; margin-bottom: .5rem; }
+    .error-sub { color: var(--muted); font-size: 0.95rem; text-align: center; max-width: 360px; }
+
+    /* COLLAGE CARD */
+    .collage-wrap { width: 100%; max-width: 760px; }
+
+    .trip-header { text-align: center; margin-bottom: 2rem; }
+    .trip-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(2,132,199,0.12); border: 1px solid rgba(2,132,199,0.3);
+      color: var(--brand3); font-size: 0.75rem; font-weight: 700;
+      padding: 5px 12px; border-radius: 999px; margin-bottom: 1rem;
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .trip-title {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 900; letter-spacing: -0.03em; margin-bottom: .5rem;
+    }
+    .trip-date { color: var(--muted); font-size: 0.9rem; }
+
+    .collage-frame {
+      width: 100%;
+      background: var(--bg2);
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.07);
+      overflow: hidden;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+      margin-bottom: 2rem;
+    }
+    .collage-frame img {
+      width: 100%; display: block;
+    }
+    .collage-frame .img-placeholder {
+      aspect-ratio: 4/3;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 0.9rem;
+    }
+
+    .actions {
+      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      color: white; font-weight: 700; font-size: 0.95rem;
+      padding: 12px 24px; border-radius: 12px; text-decoration: none;
+      border: none; cursor: pointer;
+      box-shadow: 0 6px 24px rgba(2,132,199,0.3);
+      transition: transform .15s, box-shadow .15s;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 32px rgba(2,132,199,0.4); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+      color: var(--text); font-weight: 600; font-size: 0.95rem;
+      padding: 12px 24px; border-radius: 12px; text-decoration: none;
+      cursor: pointer; transition: background .15s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.12); }
+
+    /* CTA strip */
+    .cta-strip {
+      width: 100%; max-width: 760px;
+      background: linear-gradient(135deg, rgba(2,132,199,0.08), rgba(99,102,241,0.08));
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px; padding: 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1.5rem; flex-wrap: wrap;
+    }
+    .cta-strip-text h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: .25rem; }
+    .cta-strip-text p { color: var(--muted); font-size: 0.875rem; }
+    .store-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #000; border: 1px solid #333; border-radius: 10px;
+      padding: 9px 18px; text-decoration: none; color: white;
+      transition: border-color .2s; white-space: nowrap; flex-shrink: 0;
+    }
+    .store-badge:hover { border-color: #555; }
+    .store-badge small { display: block; font-size: 9px; color: #aaa; text-transform: uppercase; letter-spacing: .05em; }
+    .store-badge strong { display: block; font-size: 14px; font-weight: 700; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 1.5rem; text-align: center;
+      color: var(--muted); font-size: 0.8rem;
+    }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+
+    #loading, #error, #collage { display: none; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">
+    <div class="nav-logo-mark">✈️</div>
+    <span class="nav-logo-text">TravelThread</span>
+  </a>
+  <a class="nav-cta" href="https://play.google.com/store/apps/details?id=com.travelthread.app">
+    ▶ Get the app
+  </a>
+</nav>
+
+<main>
+  <!-- Loading -->
+  <div id="loading" class="state">
+    <div class="spinner"></div>
+    <p class="state-text">Loading trip story…</p>
+  </div>
+
+  <!-- Error -->
+  <div id="error" class="state">
+    <div class="error-icon">🔒</div>
+    <div class="error-title">Trip story not found</div>
+    <p class="error-sub">This trip story may be private, or the link may be incorrect.</p>
+  </div>
+
+  <!-- Collage -->
+  <div id="collage" class="collage-wrap">
+    <div class="trip-header">
+      <div class="trip-badge">✨ Trip Story</div>
+      <h1 class="trip-title" id="trip-title">Loading…</h1>
+      <p class="trip-date" id="trip-date"></p>
+    </div>
+
+    <div class="collage-frame">
+      <img id="collage-img" src="" alt="Trip collage" />
+    </div>
+
+    <div class="actions">
+      <button class="btn-primary" id="btn-share" onclick="shareTrip()">↗ Share</button>
+      <a class="btn-secondary" id="btn-download" href="#" download="trip-story.svg">↓ Download</a>
+    </div>
+
+    <div class="cta-strip">
+      <div class="cta-strip-text">
+        <h3>Create your own trip story</h3>
+        <p>Private photos, live chat, a journey map, and a beautiful collage — all in one place.</p>
+      </div>
+      <a class="store-badge" href="https://play.google.com/store/apps/details?id=com.travelthread.app">
+        <span style="font-size:22px">▶</span>
+        <span>
+          <small>Get it on</small>
+          <strong>Google Play</strong>
+        </span>
+      </a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>
+    <a href="/">TravelThread</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a> &nbsp;·&nbsp;
+    <a href="/terms.html">Terms</a>
+  </p>
+</footer>
+
+<script>
+  const SUPABASE_URL = "https://jeaopfgdhwnuddgxzqoj.supabase.co";
+  const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplYW9wZmdkaHdudWRkZ3h6cW9qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0ODgxNzMsImV4cCI6MjA5NDA2NDE3M30.lOBlKICCCGmG8t3ffKlkjilzdUuBBXo93GnRvWs2aN4";
+
+  function show(id) {
+    ["loading", "error", "collage"].forEach(s => {
+      document.getElementById(s).style.display = s === id ? (id === "collage" ? "block" : "flex") : "none";
+    });
+  }
+
+  function formatDate(iso) {
+    return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  }
+
+  async function load() {
+    show("loading");
+
+    const token = location.pathname.split("/share/")[1]?.replace(/\/$/, "");
+    if (!token) { show("error"); return; }
+
+    try {
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/collage-share`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${ANON_KEY}`,
+          "apikey": ANON_KEY,
+        },
+        body: JSON.stringify({ share_token: token }),
+      });
+
+      if (!res.ok) { show("error"); return; }
+
+      const data = await res.json();
+      if (!data.image_url) { show("error"); return; }
+
+      document.getElementById("trip-title").textContent = data.group_name;
+      document.getElementById("trip-date").textContent = data.created_at ? formatDate(data.created_at) : "";
+      document.getElementById("og-title").setAttribute("content", `${data.group_name} — TravelThread`);
+      document.title = `${data.group_name} — TravelThread`;
+
+      const img = document.getElementById("collage-img");
+      img.src = data.image_url;
+      img.alt = `${data.group_name} trip collage`;
+
+      document.getElementById("btn-download").href = data.image_url;
+      document.getElementById("btn-download").download = `${data.group_name.replace(/\s+/g, "-")}-trip-story.svg`;
+
+      show("collage");
+    } catch {
+      show("error");
+    }
+  }
+
+  async function shareTrip() {
+    const title = document.getElementById("trip-title").textContent;
+    const url = location.href;
+    if (navigator.share) {
+      try { await navigator.share({ title: `${title} — TravelThread`, url }); return; } catch {}
+    }
+    await navigator.clipboard.writeText(url).catch(() => {});
+    const btn = document.getElementById("btn-share");
+    btn.textContent = "✓ Copied!";
+    setTimeout(() => { btn.textContent = "↗ Share"; }, 2000);
+  }
+
+  load();
+</script>
+</body>
+</html>
